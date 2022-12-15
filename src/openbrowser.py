@@ -3,6 +3,10 @@ import numpy as np
 from PIL import Image
 import requests
 from hashlib import sha256
+from flask import Flask
+
+class Encryption:
+    def __init__(self):
 
 class Client:
     def __init__(self, connection: str):
@@ -11,12 +15,34 @@ class Client:
     def get_available_rpcs(self):
         rpc_array = requests.get(self.connection).json
         return rpc_array
-
-
+    
     def get_enc_key(
         self,
         pixel_n: int
     ):
+        
+        # constraint: enc_key = (uint64, str<4)
+     
+        enc_key = {
+            "action": "p3s5",
+            "condition": ["M4", "P2"]
+        }
+
+        action = {
+            "p": "power of",
+            "a": "add",
+            "s": "subtract",
+            "m": "multiply"
+        }
+
+        condition = {
+            "M": "every geometric sequence n index",
+            "P": "every power of n index",
+            "F": "every fibonacci starting with n"
+        }
+
+
+
         """ 
         Returns 1D array of encryption key
         
@@ -32,7 +58,7 @@ class Client:
         enc_key = [[random.randint(0,256) for j in range(3)] for i in range(pixel_n)]
         return enc_key
 
-    def process_img_to_block(
+    def process_img(
         self,
         img_path: str,
         enc_key: list,
@@ -76,12 +102,22 @@ class Client:
 
         # get public key
         public_key = sha256(str(private_key).encode('utf-8')).hexdigest()
-        print(private_key)
-
-
-
-
         
+        return enc_rgb_array, private_key, public_key
+
+    def distribute_block_to_rpc(self, 
+        public_key: str, 
+        enc_rgb_array: list, 
+        rpc_array: list
+    ):
+        assert len(enc_rgb_array)==len(rpc_array), "num of rpc and block is different"
+
+        # ping check
+
+        # post data
+        for i in range(len(rpc_array)):
+            r = requests.post(rpc_array[i], json={public_key: enc_rgb_array[i]})
+            
             
 
 
