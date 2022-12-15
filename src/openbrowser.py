@@ -7,6 +7,7 @@ from flask import Flask
 
 class Encryption:
     def __init__(self):
+        pass
 
 class Client:
     def __init__(self, connection: str):
@@ -105,20 +106,37 @@ class Client:
         
         return enc_rgb_array, private_key, public_key
 
+    def ping_rpc(
+        self,
+        rpc_array: list
+    ):
+        # store unresponsive rpc
+        off_rpc_array = []
+
+        # ping all uri
+        for uri in rpc_array:
+            r = requests.get(f"{uri}/ping")
+            if r.status_code != 200 or r.json()["status"] == False:
+                off_rpc_array.append(uri)
+        return off_rpc_array
+
     def distribute_block_to_rpc(self, 
         public_key: str, 
         enc_rgb_array: list, 
         rpc_array: list
     ):
-        assert len(enc_rgb_array)==len(rpc_array), "num of rpc and block is different"
+        # check length of rgb array chunk and rpc array
+        assert len(enc_rgb_array)==len(rpc_array), f"Number of chunk and RPC is different. \nChunk: {len(enc_rgb_array)}\nRPC: {len(rpc_array)}"
 
         # ping check
+        off_rpc_array = ping_rpc(rpc_array)
+        assert len(off_rpc_array)==0, f"Following RPCs are unresponsive \n{off_rpc_array}"
 
         # post data
         for i in range(len(rpc_array)):
             r = requests.post(rpc_array[i], json={public_key: enc_rgb_array[i]})
-            
-            
 
+        return True
+            
 
 

@@ -12,6 +12,3 @@ client.process_img(
     rpc_array
 )
 
-'''
-200, 200, 3
-'''
