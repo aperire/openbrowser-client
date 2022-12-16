@@ -214,4 +214,4 @@ class Client:
         
         # request data from rpc array
         for rpc in rpc_array:
-            data = requests.get("")
+            data = requests.get()

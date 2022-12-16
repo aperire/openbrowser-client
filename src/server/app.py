@@ -32,12 +32,12 @@ def data_endpoint():
 
 @app.route("/retrieve", methods=["POST"])
 def retrieve_data():
-    pubkey = requests.json["pubkey"]
+    pubkey = request.json["pubkey"]
 
     with open("storage.json", "r") as f:
         data = json.load(f)
     pubkey_data = data[pubkey]
-    return pubkey_data
+    return {"data": pubkey_data}
 
 @app.route("/performance", methods=["GET"])
 def performance_endpoint():
