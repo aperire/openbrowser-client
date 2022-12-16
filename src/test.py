@@ -23,8 +23,6 @@ enc_rgb_array, private_key, public_key = client.process_img(
 )
 print(public_key)
 
-
-
 # Post data to RPC
 result = client.distribute_block_to_rpc(
     public_key,
@@ -32,4 +30,4 @@ result = client.distribute_block_to_rpc(
     rpc_array
 )
 
-print(result)
+# Retrieve data from RPC
