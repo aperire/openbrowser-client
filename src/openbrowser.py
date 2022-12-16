@@ -10,6 +10,9 @@ class Encryption:
         pass
     
     def encrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
+
+        action = ["p2", "a3"]
+        con = ["M3", "M5"]
         '''
         action = {
             "p": "power of",
