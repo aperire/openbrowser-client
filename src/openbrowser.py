@@ -120,7 +120,8 @@ class Client:
                 off_rpc_array.append(uri)
         return off_rpc_array
 
-    def distribute_block_to_rpc(self, 
+    def distribute_block_to_rpc(
+        self, 
         public_key: str, 
         enc_rgb_array: list, 
         rpc_array: list
@@ -129,12 +130,13 @@ class Client:
         assert len(enc_rgb_array)==len(rpc_array), f"Number of chunk and RPC is different. \nChunk: {len(enc_rgb_array)}\nRPC: {len(rpc_array)}"
 
         # ping check
-        off_rpc_array = ping_rpc(rpc_array)
+        off_rpc_array = self.ping_rpc(rpc_array)
+
         assert len(off_rpc_array)==0, f"Following RPCs are unresponsive \n{off_rpc_array}"
 
         # post data
         for i in range(len(rpc_array)):
-            r = requests.post(rpc_array[i], json={public_key: enc_rgb_array[i]})
+            r = requests.post(f"{rpc_array[i]}/data", json={public_key: enc_rgb_array[i]})
 
         return True
             
