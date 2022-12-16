@@ -4,15 +4,15 @@ from PIL import Image
 import requests
 from hashlib import sha256
 from flask import Flask
+import math
+
+
 
 class Encryption:
     def __init__(self):
         pass
     
     def encrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
-
-        action = ["p2", "a3"]
-        con = ["M3", "M5"]
         '''
         action = {
             "p": "power of",
@@ -23,7 +23,7 @@ class Encryption:
 
         condition = {
             "M": "every geometric sequence n index",
-            "P": "every power of n index",
+            "P": "every power of n index",s
         }
         '''
         for i in condition:
@@ -32,27 +32,61 @@ class Encryption:
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [pix**an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]**an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
-                        rgb_array = [pix+an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]+an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
-                        rgb_array = [pix-an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]-an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
-                        rgb_array = [pix*an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
-            # need work @shpark
+                        rgb_array = [rgb_array[rgb_index]*an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
             if i[0] == "P":
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [pix**an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]**an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
-                        rgb_array = [pix+an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]+an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
-                        rgb_array = [pix-an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                        rgb_array = [rgb_array[rgb_index]-an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
-                        rgb_array = [pix*an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
-
+                        rgb_array = [rgb_array[rgb_index]*an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
         return rgb_array
+
+    def decrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
+
+        '''
+        p3 s2
+        M3 M2
+        1. M3 -> p3, s2
+        2. M2 -> p3, s2
+        '''
+
+        for i in reversed(condition):
+            cn = int(i[1:])
+            if i[0] == "M":
+                for j in reversed(action):
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [int(rgb_array[rgb_index]**(1/an)) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "a":
+                        rgb_array = [int(rgb_array[rgb_index]-an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "s":
+                        rgb_array = [int(rgb_array[rgb_index]+an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "m":
+                        rgb_array = [int(rgb_array[rgb_index]/an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+            if i[0] == "P":
+                for j in reversed(action):
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [int(rgb_array[rgb_index]**(1/an)) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "a":
+                        rgb_array = [int(rgb_array[rgb_index]-an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "s":
+                        rgb_array = [int(rgb_array[rgb_index]+an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "m":
+                        rgb_array = [int(rgb_array[rgb_index]/an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+        return rgb_array
+
 
 
 class Client:
