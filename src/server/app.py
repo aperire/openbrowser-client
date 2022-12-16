@@ -16,9 +16,18 @@ def set_rpc_status():
 @app.route("/data", methods=["POST"])
 def data_endpoint():
     data = request.json
-    print(data)
+
+    try:
+        with open("storage.json", "r") as f:
+            current_data = json.load(f)
+    except:
+        pass
+    
+    current_data.update(data)
+    print(current_data)
     with open("storage.json", "w") as f:
-        json.dump(data,f)
+        json.dump(current_data, f)
+
     return {"transfer": True}
 
 @app.route("/performance", methods=["GET"])

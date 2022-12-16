@@ -8,27 +8,9 @@ from flask import Flask
 class Encryption:
     def __init__(self):
         pass
-
-class Client:
-    def __init__(self, connection: str):
-        self.connection = connection
-
-    def get_available_rpcs(self):
-        rpc_array = requests.get(self.connection).json
-        return rpc_array
     
-    def get_enc_key(
-        self,
-        pixel_n: int
-    ):
-        
-        # constraint: enc_key = (uint64, str<4)
-     
-        enc_key = {
-            "action": "p3s5",
-            "condition": ["M4", "P2"]
-        }
-
+    def encrypt_rgb_array(self, rgb_array: list action: list, condition: list):
+        '''
         action = {
             "p": "power of",
             "a": "add",
@@ -39,25 +21,49 @@ class Client:
         condition = {
             "M": "every geometric sequence n index",
             "P": "every power of n index",
-            "F": "every fibonacci starting with n"
         }
-
-
-
-        """ 
-        Returns 1D array of encryption key
+        '''
+        for i in condition:
+            cn = int(i[1:])
+            if i[0] == "M":
+                for j in action:
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [pix**an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "a":
+                        rgb_array = [pix+an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "s":
+                        rgb_array = [pix-an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "m"
+                        rgb_array = [pix*an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+            # need work @shpark
+            if i[0] == "P":
+                for j in action:
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [pix**an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "a":
+                        rgb_array = [pix+an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "s":
+                        rgb_array = [pix-an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                    if j[0] == "m"
+                        rgb_array = [pix*an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+            else:
+                raise TypeError("Unknown Command")
         
-        Args:
-            pixel_n: Number of pixels in image
+        return rgb_array
 
-        Example: 
-            >>> from openbrowser import Client
-            >>> client = Client()
-            >>> enc_key = client.get_enc_key(6016*6016)
-        """
-        # create a random array to encrypt original file
-        enc_key = [[random.randint(0,256) for j in range(3)] for i in range(pixel_n)]
-        return enc_key
+
+class Client:
+    def __init__(self, connection: str):
+        self.connection = connection
+
+    def get_available_rpcs(self):
+        rpc_array = requests.get(f"{self.connection}/rpc").json()
+        return rpc_array
+    
+    
+    
 
     def process_img(
         self,

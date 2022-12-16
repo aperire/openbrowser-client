@@ -2,26 +2,23 @@ from openbrowser import Client
 import requests
 
 
+# Initialize Client
+client = Client("http://localhost:3000")
 
-client = Client("")
-enc_key = client.get_enc_key(200*200)
+# Fetch RPC from main endpoint
+rpc_array = client.get_available_rpcs()
+print(rpc_array)
 
 
-# rpc_array = ["gr", "ge", "e"]
-# client.process_img(
-#     "img.png",
-#     enc_key,
-#     rpc_array
-# )
-
-status = client.ping_rpc(["http://127.0.0.1:5000"])
+# Ping RPC
+status = client.ping_rpc(rpc_array)
 print(status)
 
-
+# Post data to RPC
 push = client.distribute_block_to_rpc(
     "t3wgw",
     [1],
-    ["http://127.0.0.1:5000"]
+    rpc_array
 )
 
 print(push)
