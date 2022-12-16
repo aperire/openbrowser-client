@@ -21,10 +21,9 @@ def data_endpoint():
         with open("storage.json", "r") as f:
             current_data = json.load(f)
     except:
-        pass
+        current_data = data
     
     current_data.update(data)
-    print(current_data)
     with open("storage.json", "w") as f:
         json.dump(current_data, f)
 

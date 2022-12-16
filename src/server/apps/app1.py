@@ -29,6 +29,15 @@ def data_endpoint():
 
     return {"transfer": True}
 
+@app.route("/retrieve", methods=["POST"])
+def retrieve_data():
+    pubkey = request.json["pubkey"]
+
+    with open("data/storage1.json", "r") as f:
+        data = json.load(f)
+    pubkey_data = data[pubkey]
+    return {"data": pubkey_data}
+
 @app.route("/performance", methods=["GET"])
 def performance_endpoint():
     stored_data_size = os.stat("data/storage1.json")[6]

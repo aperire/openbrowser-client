@@ -10,7 +10,15 @@ import json
 class Encryption:
     def __init__(self):
         pass
-    
+
+    def power_check(self, n: int, base: int):
+        assert n>=0, "Index cannot be negative"
+        if n==0:
+            return True
+        else:
+            return math.log(n,base).is_integer()
+
+
     def encrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
         '''
         action = {
@@ -38,17 +46,17 @@ class Encryption:
                         rgb_array = [rgb_array[rgb_index]-an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
                         rgb_array = [rgb_array[rgb_index]*an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-            # if i[0] == "P":
-            #     for j in action:
-            #         an = int(j[1:])  
-            #         if j[0] == "p":
-            #             rgb_array = [rgb_array[rgb_index]**an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "a":
-            #             rgb_array = [rgb_array[rgb_index]+an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "s":
-            #             rgb_array = [rgb_array[rgb_index]-an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "m":
-            #             rgb_array = [rgb_array[rgb_index]*an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+            if i[0] == "P":
+                for j in action:
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [rgb_array[rgb_index]**an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                    if j[0] == "a":
+                        rgb_array = [rgb_array[rgb_index]+an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                    if j[0] == "s":
+                        rgb_array = [rgb_array[rgb_index]-an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                    if j[0] == "m":
+                        rgb_array = [rgb_array[rgb_index]*an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
         return rgb_array
 
     def decrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
@@ -66,24 +74,24 @@ class Encryption:
                 for j in reversed(action):
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [int(rgb_array[rgb_index]**(1/an)) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                        rgb_array = [(rgb_array[rgb_index]**(1/an)).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
-                        rgb_array = [int(rgb_array[rgb_index]-an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                        rgb_array = [(rgb_array[rgb_index]-an).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
-                        rgb_array = [int(rgb_array[rgb_index]+an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                        rgb_array = [(rgb_array[rgb_index]+an).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
-                        rgb_array = [int(rgb_array[rgb_index]/an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-            # if i[0] == "P":
-            #     for j in reversed(action):
-            #         an = int(j[1:])  
-            #         if j[0] == "p":
-            #             rgb_array = [int(rgb_array[rgb_index]**(1/an)) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "a":
-            #             rgb_array = [int(rgb_array[rgb_index]-an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "s":
-            #             rgb_array = [int(rgb_array[rgb_index]+an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-            #         if j[0] == "m":
-            #             rgb_array = [int(rgb_array[rgb_index]/an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+                        rgb_array = [(rgb_array[rgb_index]/an).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
+            if i[0] == "P":
+                for j in reversed(action):
+                    an = int(j[1:])  
+                    if j[0] == "p":
+                        rgb_array = [(rgb_array[rgb_index]**(1/an)).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "a":
+                        rgb_array = [(rgb_array[rgb_index]-an).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "s":
+                        rgb_array = [(rgb_array[rgb_index]+an).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
+                    if j[0] == "m":
+                        rgb_array = [(rgb_array[rgb_index]/an).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
         return rgb_array
 
 class Client:
@@ -137,9 +145,10 @@ class Client:
         img = Image.open(img_path)
         raw_rgb_array = np.array(img)
         shape = raw_rgb_array.shape
+
         
         # change shape to linear rgb: .reshape(1, y*x, 3: rgb)
-        rgb_array = raw_rgb_array.reshape(1, shape[0]*shape[1], shape[2])[0]
+        rgb_array = raw_rgb_array.reshape(1, shape[0]*shape[1], 3)[0]
 
         # encrypt each pixels
         enc_rgb_array = self.encryption.encrypt_rgb_array(
@@ -213,5 +222,23 @@ class Client:
         rpc_array = private_key["rpc"]
         
         # request data from rpc array
+        encrypted_rgb_array = []
         for rpc in rpc_array:
-            data = requests.get()
+            data = requests.post(f"{rpc}/retrieve", json={"pubkey": public_key}).json()["data"]
+            encrypted_rgb_array.append(data)
+        
+        encrypted_rgb_array = np.asarray(encrypted_rgb_array).reshape(dim[0]*dim[1], 3)
+
+        # decrypt the rgb array
+        decrypted_rgb_array = self.encryption.decrypt_rgb_array(
+            encrypted_rgb_array, action, condition
+        )
+
+        # reshape the rgb array
+        rgb_array = np.asarray(decrypted_rgb_array).reshape(dim[0], dim[1], 3).astype(np.uint8)
+
+        img = Image.fromarray(rgb_array)
+
+        img.save("fd.jpeg")
+        
+        return True
