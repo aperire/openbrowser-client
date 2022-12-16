@@ -3,7 +3,9 @@ from flask import Flask
 app = Flask(__name__)
 
 rpc_array = [
-    "http://localhost:8080"
+    "http://localhost:4000",
+    "http://localhost:1353",
+    "http://localhost:2481",
 ]
 
 @app.route("/rpc", methods=["GET"])

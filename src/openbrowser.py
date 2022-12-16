@@ -5,8 +5,7 @@ import requests
 from hashlib import sha256
 from flask import Flask
 import math
-
-
+import json
 
 class Encryption:
     def __init__(self):
@@ -39,17 +38,17 @@ class Encryption:
                         rgb_array = [rgb_array[rgb_index]-an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
                         rgb_array = [rgb_array[rgb_index]*an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-            if i[0] == "P":
-                for j in action:
-                    an = int(j[1:])  
-                    if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index]**an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-                    if j[0] == "a":
-                        rgb_array = [rgb_array[rgb_index]+an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-                    if j[0] == "s":
-                        rgb_array = [rgb_array[rgb_index]-an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-                    if j[0] == "m":
-                        rgb_array = [rgb_array[rgb_index]*an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+            # if i[0] == "P":
+            #     for j in action:
+            #         an = int(j[1:])  
+            #         if j[0] == "p":
+            #             rgb_array = [rgb_array[rgb_index]**an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "a":
+            #             rgb_array = [rgb_array[rgb_index]+an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "s":
+            #             rgb_array = [rgb_array[rgb_index]-an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "m":
+            #             rgb_array = [rgb_array[rgb_index]*an if math.log(rgb_index,cn).is_integer() else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
         return rgb_array
 
     def decrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
@@ -74,20 +73,18 @@ class Encryption:
                         rgb_array = [int(rgb_array[rgb_index]+an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
                         rgb_array = [int(rgb_array[rgb_index]/an) if rgb_index%cn==0 else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-            if i[0] == "P":
-                for j in reversed(action):
-                    an = int(j[1:])  
-                    if j[0] == "p":
-                        rgb_array = [int(rgb_array[rgb_index]**(1/an)) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-                    if j[0] == "a":
-                        rgb_array = [int(rgb_array[rgb_index]-an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-                    if j[0] == "s":
-                        rgb_array = [int(rgb_array[rgb_index]+an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
-                    if j[0] == "m":
-                        rgb_array = [int(rgb_array[rgb_index]/an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+            # if i[0] == "P":
+            #     for j in reversed(action):
+            #         an = int(j[1:])  
+            #         if j[0] == "p":
+            #             rgb_array = [int(rgb_array[rgb_index]**(1/an)) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "a":
+            #             rgb_array = [int(rgb_array[rgb_index]-an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "s":
+            #             rgb_array = [int(rgb_array[rgb_index]+an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
+            #         if j[0] == "m":
+            #             rgb_array = [int(rgb_array[rgb_index]/an) if math.log(rgb_index,cn).is_integer() else int(rgb_array[rgb_index]) for rgb_index in range(len(rgb_array))]
         return rgb_array
-
-
 
 class Client:
     def __init__(self, connection: str):
@@ -103,7 +100,6 @@ class Client:
         action: list,
         condition: list,
         img_path: str,
-        enc_key: list,
         rpc_array: list
     ):
         """ 
@@ -147,7 +143,7 @@ class Client:
         }
 
         # get public key
-        public_key = sha256(str(private_key).encode('utf-8')).hexdigest()
+        public_key = str(sha256(str(private_key).encode('utf-8')).hexdigest())
         
         return enc_rgb_array, private_key, public_key
 
@@ -181,9 +177,7 @@ class Client:
 
         # post data
         for i in range(len(rpc_array)):
-            r = requests.post(f"{rpc_array[i]}/data", json={public_key: enc_rgb_array[i]})
+            json_data = {public_key: enc_rgb_array[i].tolist()}
+            r = requests.post(f"{rpc_array[i]}/data", json=json_data)
 
         return True
-            
-
-
