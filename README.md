@@ -1,17 +1,33 @@
-# Test Guide
+# OpenBrowser Test Guide
+## RPC Side
+1. Access server directory
 
-1. Start main server in port 3000
+`cd src/server/app.py`
+
+2. Start server
+
+`python3 app.py`
+
+
+## RPC Registry Side
+1. Access main endpoint directory
 
 `cd src/main_endpoint`
 
-`flask run -h localhost -p 3000`
+2. Update `rpc_array`
 
-2. Start rpc server in port 8080
+3. Start server
+`python3 app.py`
 
-`cd src/server`
+## Client Side
+1. Access source directory
 
-`flask run -h localhost -p 8080`
+`cd src`
 
-2. Setup test script and run
+2. Initialize client `client = Client(rpc_registry_endpoint)`
 
-`python3 src/test.py`
+3. Select image `img_path = "path to image"`
+
+4. Run
+
+`python3 test.py`
