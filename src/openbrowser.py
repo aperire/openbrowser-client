@@ -9,7 +9,7 @@ class Encryption:
     def __init__(self):
         pass
     
-    def encrypt_rgb_array(self, rgb_array: list action: list, condition: list):
+    def encrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
         '''
         action = {
             "p": "power of",
@@ -29,44 +29,42 @@ class Encryption:
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [pix**an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                        rgb_array = [pix**an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
                     if j[0] == "a":
-                        rgb_array = [pix+an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                        rgb_array = [pix+an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
                     if j[0] == "s":
-                        rgb_array = [pix-an for pix in rgb_array if rgb_array.index(pix)%cn==0]
-                    if j[0] == "m"
-                        rgb_array = [pix*an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                        rgb_array = [pix-an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                    if j[0] == "m":
+                        rgb_array = [pix*an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
             # need work @shpark
             if i[0] == "P":
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [pix**an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                        rgb_array = [pix**an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
                     if j[0] == "a":
-                        rgb_array = [pix+an for pix in rgb_array if rgb_array.index(pix)%cn==0]
+                        rgb_array = [pix+an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
                     if j[0] == "s":
-                        rgb_array = [pix-an for pix in rgb_array if rgb_array.index(pix)%cn==0]
-                    if j[0] == "m"
-                        rgb_array = [pix*an for pix in rgb_array if rgb_array.index(pix)%cn==0]
-            else:
-                raise TypeError("Unknown Command")
-        
+                        rgb_array = [pix-an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+                    if j[0] == "m":
+                        rgb_array = [pix*an if rgb_array.index(pix)%cn==0 else pix for pix in rgb_array]
+
         return rgb_array
 
 
 class Client:
     def __init__(self, connection: str):
         self.connection = connection
+        self.encryption = Encryption()
 
     def get_available_rpcs(self):
         rpc_array = requests.get(f"{self.connection}/rpc").json()
         return rpc_array
-    
-    
-    
 
     def process_img(
         self,
+        action: list,
+        condition: list,
         img_path: str,
         enc_key: list,
         rpc_array: list
@@ -93,7 +91,11 @@ class Client:
         rgb_array = raw_rgb_array.reshape(1, shape[0]*shape[1], shape[2])[0]
 
         # encrypt each pixels
-        enc_rgb_array = np.add(rgb_array, enc_key)
+        enc_rgb_array = self.encryption.encrypt_rgb_array(
+            rgb_array,
+            action,
+            condition
+        )
 
         # distribute pixels for each RPCs
         enc_rgb_array = np.array_split(enc_rgb_array, len(rpc_array))
@@ -102,7 +104,7 @@ class Client:
         # get private key
         private_key = {
             "dim": (shape[0], shape[1]),
-            "enc": enc_key,
+            "enc": [action, condition],
             "rng": range_array,
             "rpc": rpc_array
         }
