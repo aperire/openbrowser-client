@@ -92,6 +92,20 @@ class Client:
         self.encryption = Encryption()
 
     def get_available_rpcs(self):
+        """
+        Get RPCs that are online
+        
+        Example:
+            >>> rpc_array = client.get_available_rpcs()
+            [
+                "https://localhost:3000",
+                "https://localhost:5000"
+            ]
+        
+        Returns:
+            Type: list
+            RPCs in registry
+        """
         rpc_array = requests.get(f"{self.connection}/rpc").json()
         return rpc_array
 
@@ -103,17 +117,21 @@ class Client:
         rpc_array: list
     ):
         """ 
-        Returns private key and 2D array of blocks
+        Process image prior to RPC request
         
         Args:
+            action: action key for encryption
+            condition: condition key for encryption
             img_path: path to image file
-            enc_key: encryption key generated from client.get_enc_key(pixel_n)
             rpc_array: list of selected RPCs to transfer data
             
         Example: 
-            >>> from openbrowser import Client
-            >>> client = Client()
-            >>> enc_key = client.get_enc_key(6016*6016)
+            >>> enc_rgb_array, private_key, public_key = client.process_img(
+                action=["a3", "m2"],
+                condition=["M4", "M17"],
+                img_path="./img.png",
+                rpc_array=["http://localhost:3000"]
+            )
         """
         # open image and get rgb array
         img = Image.open(img_path)
@@ -137,7 +155,7 @@ class Client:
         # get private key
         private_key = {
             "dim": (shape[0], shape[1]),
-            "enc": [action, condition],
+            "enc": (action, condition),
             "rng": range_array,
             "rpc": rpc_array
         }
@@ -181,3 +199,19 @@ class Client:
             r = requests.post(f"{rpc_array[i]}/data", json=json_data)
 
         return True
+    
+    def retrieve_block_from_rpc(
+        self,
+        public_key: str,
+        private_key: dict,
+        retrieve_dir: str
+    ):
+        # decompose private key
+        dim = private_key["dim"]
+        action, condition = private_key["enc"]
+        rng = private_key["rng"]
+        rpc_array = private_key["rpc"]
+        
+        # request data from rpc array
+        for rpc in rpc_array:
+            data = requests.get()
