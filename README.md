@@ -1,4 +1,9 @@
 # OpenBrowser Test Guide
+
+`python -m venv env`
+
+`pip install -r requirements.txt`
+
 ## RPC Side
 1. Access server directory
 
