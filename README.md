@@ -2,12 +2,14 @@
 
 `python -m venv env`
 
+`source env/bin/activate`
+
 `pip install -r requirements.txt`
 
 ## RPC Side
 1. Access server directory
 
-`cd src/server/app.py`
+`cd script/server/app.py`
 
 2. Start server
 
@@ -17,7 +19,7 @@
 ## RPC Registry Side
 1. Access main endpoint directory
 
-`cd src/main_endpoint`
+`cd script/main_endpoint`
 
 2. Update `rpc_array`
 
@@ -27,7 +29,7 @@
 ## Client Side
 1. Access source directory
 
-`cd src`
+`cd script`
 
 2. Initialize client `client = Client(rpc_registry_endpoint)`
 
