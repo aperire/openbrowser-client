@@ -1,1 +1,1 @@
-{"dim": [800, 560], "enc": [["p2"], ["M2"]], "rng": [224000, 224000], "rpc": ["http://localhost:4000", "http://localhost:8080"]}
+{"dim": [800, 560], "enc": [["p2"], ["M2"]], "rng": [448000], "rpc": ["http://localhost:8080"]}

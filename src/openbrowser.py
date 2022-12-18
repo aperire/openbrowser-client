@@ -74,7 +74,7 @@ class Encryption:
                 for j in reversed(action):
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index].astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
+                        rgb_array = [(rgb_array[rgb_index]**(1/an)).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
                         rgb_array = [(rgb_array[rgb_index]-an).astype(int) if rgb_index%cn==0 else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
