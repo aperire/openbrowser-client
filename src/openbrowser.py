@@ -39,24 +39,25 @@ class Encryption:
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index]**an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [np.array(rgb_array[rgb_index].tolist()**an) if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
-                        rgb_array = [rgb_array[rgb_index]+an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [np.array(rgb_array[rgb_index].tolist()+an) if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
-                        rgb_array = [rgb_array[rgb_index]-an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [np.array(rgb_array[rgb_index].tolist()-an) if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
-                        rgb_array = [rgb_array[rgb_index]*an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [np.array(rgb_array[rgb_index].tolist()*an) if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        
             if i[0] == "P":
                 for j in action:
                     an = int(j[1:])  
                     if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index]**an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [rgb_array[rgb_index].tolist()**an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
-                        rgb_array = [rgb_array[rgb_index]+an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [rgb_array[rgb_index].tolist()+an if self.power_check(rgb_index,cn) else rgb_array[rgb_index].tolist() for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
-                        rgb_array = [rgb_array[rgb_index]-an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [rgb_array[rgb_index].tolist()-an if self.power_check(rgb_index,cn) else rgb_array[rgb_index].tolist() for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
-                        rgb_array = [rgb_array[rgb_index]*an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
+                        rgb_array = [rgb_array[rgb_index].tolist()*an if self.power_check(rgb_index,cn) else rgb_array[rgb_index].tolist() for rgb_index in range(len(rgb_array))]
         return rgb_array
 
     def decrypt_rgb_array(self, rgb_array: list, action: list, condition: list):
@@ -145,18 +146,16 @@ class Client:
         img = Image.open(img_path)
         raw_rgb_array = np.array(img)
         shape = raw_rgb_array.shape
-
         
         # change shape to linear rgb: .reshape(1, y*x, 3: rgb)
         rgb_array = raw_rgb_array.reshape(1, shape[0]*shape[1], 3)[0]
-
         # encrypt each pixels
         enc_rgb_array = self.encryption.encrypt_rgb_array(
             rgb_array,
             action,
             condition
         )
-
+        
         # distribute pixels for each RPCs
         enc_rgb_array = np.array_split(enc_rgb_array, len(rpc_array))
         range_array = [len(i) for i in enc_rgb_array]
@@ -227,12 +226,13 @@ class Client:
             data = requests.post(f"{rpc}/retrieve", json={"pubkey": public_key}).json()["data"]
             encrypted_rgb_array.append(data)
         
-        encrypted_rgb_array = np.asarray(encrypted_rgb_array).reshape(dim[0]*dim[1], 3)
-
+        encrypted_rgb_array = np.asarray(encrypted_rgb_array).reshape(dim[0]*dim[1], 3)[0]
+        
         # decrypt the rgb array
         decrypted_rgb_array = self.encryption.decrypt_rgb_array(
             encrypted_rgb_array, action, condition
         )
+        
         # reshape the rgb array
         rgb_array = np.asarray(decrypted_rgb_array).reshape(dim[0], dim[1], 3).astype(np.uint8)
 
@@ -240,4 +240,4 @@ class Client:
 
         img.save("fd.jpeg")
         
-        return True
+        return rgb_array
