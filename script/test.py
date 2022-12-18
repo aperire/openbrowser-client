@@ -5,63 +5,58 @@ import json
 from PIL import Image
 import numpy as np
 
-def loopit():
-    # Initialize Client
-    client = Client("http://localhost:3000")
-    # encryption = Encryption()
-    # condition = ["M2"]
-    # action = ["p2"]
-    # array = np.asarray([[13,12,199], [211,212,213]])
-    # enc_array = encryption.encrypt_rgb_array(
-    #     array,
-    #     action,
-    #     condition
-    # )
-    # dec_array = encryption.encrypt_rgb_array(
-    #     enc_array,
-    #     action,
-    #     condition
-    # )
-    # print(array)
-    # print(dec_array)
-    # Fetch RPC from main endpoint
-    rpc_array = client.get_available_rpcs()
 
-    # Ping RPC
-    off_rpc_array = client.ping_rpc(rpc_array)
-    assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
+# Initialize Client
+client = Client("http://locahost:3000")
+# encryption = Encryption()
+# condition = ["M2"]
+# action = ["p2"]
+# array = np.asarray([[13,12,199], [211,212,213], [0,0,256]])
+# enc_array = encryption.encrypt_rgb_array(
+#     array,
+#     action,
+#     condition
+# )
+# dec_array = encryption.decrypt_rgb_array(
+#     enc_array,
+#     action,
+#     condition
+# )
+# print(array)
+# print(enc_array)
+# print(dec_array)
 
-    # Set constant
-    condition = ["M2"]
-    action = ["p2"]
-    img_path = "./img/fd.jpeg"
+# Fetch RPC from main endpoint
+rpc_array = client.get_available_rpcs()
 
-    # Process Image
-    enc_rgb_array, private_key, public_key = client.process_img(
-        action, condition, img_path, rpc_array
-    )
+# Ping RPC
+off_rpc_array = client.ping_rpc(rpc_array)
+assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
 
-    with open("private_key.json", "w") as f:
-        json.dump(private_key, f)
+# Set constant
+condition = ["M2"]
+action = ["p2"]
+img_path = "./img/fd.jpeg"
 
-    # Post data to RPC
-    result = client.distribute_block_to_rpc(
-        public_key,
-        enc_rgb_array,
-        rpc_array
-    )
+# Process Image
+enc_rgb_array, private_key, public_key = client.process_img(
+    action, condition, img_path, rpc_array
+)
 
-    # Retrieve data from RPC
-    retrieve_img = client.retrieve_block_from_rpc(
-        public_key,
-        private_key,
-        ""
-    )
-    print(retrieve_img)
+with open("private_key.json", "w") as f:
+    json.dump(private_key, f)
 
-n = 0
-for i in range(100):
-    
-    loopit()
-    n+=1
-    print(n)
+# Post data to RPC
+result = client.distribute_block_to_rpc(
+    public_key,
+    enc_rgb_array,
+    rpc_array
+)
+
+# Retrieve data from RPC
+retrieve_img = client.retrieve_block_from_rpc(
+    public_key,
+    private_key,
+    ""
+)
+print(retrieve_img)
