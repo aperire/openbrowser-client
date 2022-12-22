@@ -8,10 +8,10 @@ import numpy as np
 # Initialize Client
 client = Client("http://localhost:3000")
 
-encryption = Encryption()
+# encryption = Encryption()
 # condition = ["M2"]
-# action = ["p2"]
-# array = np.asarray([[[13,12,199], [211,212,213], [0,0,256]]])
+# action = ["m63"]
+# array = np.asarray([[13,12,199], [211,212,213], [0,0,256]])
 # enc_array = encryption.encrypt_rgb_array(
 #     array,
 #     action,
@@ -34,11 +34,10 @@ off_rpc_array = client.ping_rpc(rpc_array)
 assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
 
 # Set constant
-condition = ["M2"]
-action = ["m63"]
+condition = ["M2", "P2"]
+action = ["m63", "s100"]
 img_path = "./img/fd.jpeg"
 
-a=np.array([125, 99, 100])
 
 # Original Image
 raw = np.array(Image.open(img_path))
