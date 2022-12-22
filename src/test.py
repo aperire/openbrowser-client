@@ -43,8 +43,6 @@ img_path = "./img/fd.jpeg"
 raw = np.array(Image.open(img_path))
 shape = raw.shape
 raw = raw.reshape(1, shape[0]*shape[1], 3)[0]
-with open("original.json", "w") as f:
-    json.dump(raw.tolist(), f)
 # Process Image
 enc_rgb_array, private_key, public_key = client.process_img(
     action, condition, img_path, rpc_array
@@ -66,5 +64,3 @@ rgb_array = client.retrieve_block_from_rpc(
     private_key,
     ""
 )
-with open("proc.json", "w") as f:
-    json.dump(rgb_array.tolist(), f)
