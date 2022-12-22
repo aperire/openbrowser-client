@@ -49,7 +49,7 @@ def performance_endpoint():
             "processor": processor, 
             "ram": ram,
             "free_storage": free_storage,
-            "used_storage": f"{stored_data_size} B"}
+            "used_storage": f"{stored_data_size/(1024**3)} GB"}
 
 
     

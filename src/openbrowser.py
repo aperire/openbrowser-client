@@ -1,11 +1,8 @@
-import random
 import numpy as np
 from PIL import Image
 import requests
 from hashlib import sha256
-from flask import Flask
 import math
-import json
 
 class Encryption:
     def __init__(self):
@@ -22,10 +19,8 @@ class Encryption:
     def encrypt_rgb_array(self, rgb_array: np.array, action: list, condition: list):
         '''
         action = {
-            "p": "power of",
             "a": "add",
-            "s": "subtract",
-            "m": "multiply"
+            "s": "subtract"
         }
 
         condition = {
@@ -38,27 +33,19 @@ class Encryption:
             if i[0] == "M":
                 for j in action:
                     an = int(j[1:]) 
-                    if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index]**an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
                         rgb_array = [rgb_array[rgb_index]+an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
                         rgb_array = [rgb_array[rgb_index]-an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-                    if j[0] == "m":
-                        rgb_array = [rgb_array[rgb_index]*an if rgb_index%cn==0 else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                         
             if i[0] == "P":
                 for j in action:
                     an = int(j[1:])  
-                    if j[0] == "p":
-                        rgb_array = [rgb_array[rgb_index]**an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "a":
                         rgb_array = [rgb_array[rgb_index]+an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
                     if j[0] == "s":
                         rgb_array = [rgb_array[rgb_index]-an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-                    if j[0] == "m":
-                        rgb_array = [rgb_array[rgb_index]*an if self.power_check(rgb_index,cn) else rgb_array[rgb_index] for rgb_index in range(len(rgb_array))]
-        return np.array(rgb_array, dtype=np.int64)
+        return np.array(rgb_array, dtype=np.int8)
 
     def decrypt_rgb_array(self, rgb_array: np.array, action: list, condition: list):
 
@@ -92,7 +79,7 @@ class Encryption:
                         rgb_array = [(rgb_array[rgb_index]+an).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
                     if j[0] == "m":
                         rgb_array = [(rgb_array[rgb_index]/an).astype(int) if self.power_check(rgb_index,cn) else (rgb_array[rgb_index]).astype(int) for rgb_index in range(len(rgb_array))]
-        return np.array(rgb_array, dtype=np.int64)
+        return np.array(rgb_array, dtype=np.int8)
 
 class Client:
     def __init__(self, connection: str):
@@ -143,7 +130,7 @@ class Client:
         """
         # open image and get rgb array
         img = Image.open(img_path)
-        raw_rgb_array = np.array(img, dtype=np.int64)
+        raw_rgb_array = np.array(img, dtype=np.int8)
         shape = raw_rgb_array.shape
         
         # change shape to linear rgb: .reshape(1, y*x, 3: rgb)
@@ -211,7 +198,8 @@ class Client:
         self,
         public_key: str,
         private_key: dict,
-        retrieve_dir: str
+        retrieve_dir: str,
+        file_name: str
     ):
         # decompose private key
         dim = private_key["dim"]
@@ -235,6 +223,6 @@ class Client:
 
         img = Image.fromarray(rgb_array)
 
-        img.save("fd.jpeg")
+        img.save(f"{retrieve_dir}/{file_name}")
         
         return rgb_array

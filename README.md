@@ -4,6 +4,23 @@
 
 `pip install -r requirements.txt`
 
+## Directory Explanation
+
+* ./env: Virtual env
+
+* ./src/img: Test image directory
+
+* ./src/main_endpoint: RPC directory app
+
+* ./src/retrieve_img: Retrieved image directory
+
+* ./src/server: RPC server app
+
+* ./src/openbrowser.py: Openbrowser client core
+
+* ./src/private_key.json: Private key json
+
+
 ## RPC Side
 1. Access server directory
 

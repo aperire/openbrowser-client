@@ -35,7 +35,7 @@ assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
 
 # Set constant
 condition = ["M2", "P2"]
-action = ["m63", "s100"]
+action = ["a52", "s18"]
 img_path = "./img/fd.jpeg"
 
 
@@ -62,5 +62,6 @@ result = client.distribute_block_to_rpc(
 rgb_array = client.retrieve_block_from_rpc(
     public_key,
     private_key,
-    ""
+    "retrieve_img",
+    "fd.jpeg"
 )
