@@ -18,7 +18,7 @@ assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
 # Set constant
 condition = ["M2", "P2", "M5"]
 action = ["a52", "s18"]
-img_path = "./img/fd1.jpeg"
+img_path = "./img/img.jpeg"
 
 # Process Image
 enc_rgb_array, private_key, public_key = client.process_img(
@@ -40,5 +40,5 @@ rgb_array = client.retrieve_block_from_rpc(
     public_key,
     private_key,
     "retrieve_img",
-    "fd1.jpeg"
+    "result.jpeg"
 )

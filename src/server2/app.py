@@ -15,6 +15,7 @@ def set_rpc_status():
 
 @app.route("/data", methods=["POST"])
 def data_endpoint():
+    print("CLIENT POSTING DATA")
     data = request.json
 
     try:
@@ -31,6 +32,7 @@ def data_endpoint():
 
 @app.route("/retrieve", methods=["POST"])
 def retrieve_data():
+    print("CLIENT REQUESTING DATA")
     pubkey = request.json["pubkey"]
 
     with open("storage.json", "r") as f:
@@ -52,7 +54,6 @@ def performance_endpoint():
             "used_storage": f"{stored_data_size/(1024**3)} GB"}
 
 
-    
 
 if __name__ == "__main__":
     app.run(host="localhost", port=6000, debug=True)
