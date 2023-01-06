@@ -17,7 +17,7 @@ assert len(off_rpc_array)==0, "Certain RPCs are unavailable"
 
 # Set constant
 condition = ["M2", "P2", "M5"]
-action = ["a52", "s18"]
+action = ["a2", "s8"]
 img_path = "./img/img.jpeg"
 
 # Process Image

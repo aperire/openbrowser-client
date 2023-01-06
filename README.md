@@ -55,3 +55,18 @@
 4. Run
 
 `python3 test.py`
+
+
+## Frontend Requirements
+
+CONST
+- main_endpoint = http://localhost:3000
+
+VAR
+- encryption = action, condition
+- img = uploaded image
+
+
+1. Image processing (client.process_img)
+2. Image upload (To server) POST
+3. Image retrieve (From server) POST
