@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 from hashlib import sha256
 import math
+import base64
 
 class Encryption:
     def __init__(self):
@@ -188,8 +189,9 @@ class Client:
 
         # post data
         for i in range(len(rpc_array)):
-            json_data = {public_key: (enc_rgb_array[i]).tolist()}
-
+            data = str(base64.b64encode(enc_rgb_array[i].tolist()))
+            json_data = {public_key: data}
+            
             r = requests.post(f"{rpc_array[i]}/data", json=json_data)
 
         return True
